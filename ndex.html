@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Filter Tool</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        form { max-width: 400px; margin: auto; padding: 1rem; border: 1px solid #ccc; }
+        input, textarea { width: 100%; margin-bottom: 1rem; padding: 0.5rem; }
+        button { padding: 0.5rem 1rem; background-color: #007bff; color: white; border: none; }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <h2>CV Filter Tool for Financial Accountant</h2>
+    <form id="cvForm">
+        <label for="cvData">Paste CV Data Here:</label>
+        <textarea id="cvData" rows="10"></textarea>
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('cvForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const cvData = document.getElementById('cvData').value;
+
+            const response = await fetch('https://api.openai.com/v1/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer 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'
+                },
+                body: JSON.stringify({
+                    model: "text-davinci-003",
+                    prompt: `Evaluate this CV: ${cvData}. Does it meet the following criteria for a financial accountant?\n\n1. Age under 35\n2. Experience as a financial accountant or accountant for 3-5 years\n3. Graduate of commerce with an accounting major\n4. Currently employed as an accountant or financial accountant\n\nReply with 'suitable' or 'not suitable'.`,
+                    max_tokens: 150
+                })
+            });
+
+            const result = await response.json();
+            document.getElementById('result').innerText = result.choices[0].text.trim();
+        });
+    </script>
+</body>
+</html>
